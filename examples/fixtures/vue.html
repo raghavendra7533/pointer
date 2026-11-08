@@ -1,0 +1,9 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Vue fixture</title>
+<div id="app"></div>
+<script src="/vendor/vue.js"></script>
+<script>
+  const PricingCard = { name: 'PricingCard', __file: 'src/components/PricingCard.vue', template: '<div class="card"><button id="vbtn">Buy now</button></div>' };
+  Vue.createApp({ name: 'App', __file: 'src/App.vue', components: { PricingCard }, template: '<main><PricingCard /></main>' }).mount('#app');
+</script>

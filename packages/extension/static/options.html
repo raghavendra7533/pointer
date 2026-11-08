@@ -1,0 +1,56 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Pointer options</title>
+<style>
+  :root { color-scheme: light dark; --fg:#111827; --bg:#fff; --muted:#6b7280; --line:#d1d5db; --accent:#2563eb; }
+  @media (prefers-color-scheme: dark) { :root { --fg:#e5e7eb; --bg:#0f172a; --muted:#94a3b8; --line:#334155; --accent:#60a5fa; } }
+  body { margin: 0; padding: 32px 16px; font: 14px/1.5 system-ui, sans-serif; color: var(--fg); background: var(--bg); }
+  main { max-width: 560px; margin: 0 auto; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 24px; }
+  label { display: block; font-weight: 600; margin: 18px 0 4px; }
+  .hint { color: var(--muted); font-size: 12.5px; margin: 2px 0 6px; font-weight: 400; }
+  input[type=text], input[type=password], input[type=number], textarea { width: 100%; box-sizing: border-box; padding: 8px 10px; font: inherit; color: inherit; background: transparent; border: 1px solid var(--line); border-radius: 6px; }
+  textarea { min-height: 84px; font-family: ui-monospace, monospace; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .row { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid var(--accent); background: var(--accent); color: #fff; cursor: pointer; }
+  button.secondary { background: transparent; color: var(--accent); }
+  #status { margin-top: 8px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 6px; }
+  .opt { display: flex; gap: 8px; align-items: center; font-weight: 400; margin: 6px 0; }
+  code { font-family: ui-monospace, monospace; font-size: 12.5px; }
+</style>
+<main>
+  <h1>Pointer</h1>
+  <p class="sub">Click an element in Chrome, and your coding agent knows what you mean. Everything stays on this machine.</p>
+
+  <div id="status" role="status" aria-live="polite">Checking…</div>
+  <div class="row"><button id="test" class="secondary">Check again</button></div>
+  <p class="hint" id="fix"></p>
+
+  <details style="margin-top:24px">
+    <summary>Settings</summary>
+    <label>Screenshots</label>
+    <label class="opt"><input id="screenshots" type="checkbox"> Attach a cropped screenshot of the element</label>
+    <div class="hint">Screenshots go to your model provider along with the rest of the selection.</div>
+
+    <label>Where the picker may run</label>
+    <label class="opt"><input type="radio" name="mode" value="sensitive-blocked"> Everywhere except banking, mail and sign-in sites</label>
+    <label class="opt"><input type="radio" name="mode" value="allowlist"> Only localhost and the hosts below</label>
+
+    <label for="hosts">Always allowed hosts</label>
+    <div class="hint">One per line. <code>*.example.com</code> works. Listing a host overrides the banking and mail block.</div>
+    <textarea id="hosts" spellcheck="false"></textarea>
+    <div class="row"><button id="save">Save</button></div>
+  </details>
+
+  <details style="margin-top:12px">
+    <summary>Advanced</summary>
+    <label for="port">Bridge port</label>
+    <input id="port" type="number" min="1" max="65535">
+    <label for="token">Bridge token</label>
+    <div class="hint">Filled in by pairing. Only paste one here for a manual setup (<code>npx pointer-bridge token</code>). Stored locally, never synced.</div>
+    <input id="token" type="password" autocomplete="off" spellcheck="false">
+  </details>
+</main>
+<script src="options.js"></script>

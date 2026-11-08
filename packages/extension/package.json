@@ -1,0 +1,15 @@
+{
+  "name": "pointer-extension",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "build:e2e": "POINTER_E2E=1 node build.mjs",
+    "zip": "node build.mjs && cd dist && zip -qr ../pointer-extension.zip .",
+    "typecheck": "tsc -p ."
+  },
+  "devDependencies": {
+    "@pointer/core": "workspace:*"
+  }
+}

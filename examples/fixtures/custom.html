@@ -1,0 +1,10 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Any-stack fixture</title>
+<button id="sbtn">Solid-ish button</button>
+<script>
+  // A stack Pointer has no built-in detector for plugs in with one function.
+  window.__POINTER_SOURCE__ = (el) => el.id === 'sbtn'
+    ? { framework: 'solid', components: [{ name: 'Counter', file: '/src/Counter.tsx', line: 14 }] }
+    : null;
+</script>

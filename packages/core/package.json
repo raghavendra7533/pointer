@@ -1,0 +1,22 @@
+{
+  "name": "@pointer/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./sanitize": "./src/sanitize.ts",
+    "./selector": "./src/selector.ts",
+    "./format": "./src/format.ts",
+    "./paths": "./src/paths.ts",
+    "./types": "./src/types.ts",
+    "./limits": "./src/limits.ts",
+    "./schema": "./src/schema.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p ."
+  },
+  "dependencies": {
+    "zod": "^4.6.7"
+  }
+}
