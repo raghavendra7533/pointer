@@ -21,7 +21,7 @@ jobs:
       - run: pnpm lint && pnpm typecheck && pnpm build && pnpm test
       - run: pnpm --filter pointer-extension zip
       - run: cd packages/extension && sha256sum pointer-extension.zip > pointer-extension.zip.sha256
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
           files: |
             packages/extension/pointer-extension.zip
