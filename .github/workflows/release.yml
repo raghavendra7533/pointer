@@ -5,7 +5,6 @@ on:
 
 permissions:
   contents: write
-  id-token: write
 
 jobs:
   release:
@@ -22,9 +21,6 @@ jobs:
       - run: pnpm lint && pnpm typecheck && pnpm build && pnpm test
       - run: pnpm --filter pointer-extension zip
       - run: cd packages/extension && sha256sum pointer-extension.zip > pointer-extension.zip.sha256
-      - run: pnpm --filter pointer-bridge publish --provenance --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - uses: softprops/action-gh-release@v2
         with:
           files: |
