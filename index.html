@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pointer — click the element, hand it to your agent</title>
+<meta name="description" content="Click any element in Chrome and Pointer hands it to Claude Code, Codex or any MCP agent: the DOM, computed styles, a screenshot, and the file and line that render it. One command to set up.">
+<meta property="og:title" content="Pointer — click the element, hand it to your agent">
+<meta property="og:description" content="Stop describing UI. Click it. Works with Claude Code, Codex and any MCP client.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0A0A0B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230A0A0B'/%3E%3Cpath d='M6 5l12 6-5 1.5L11 18z' fill='%23FF7A45'/%3E%3C/svg%3E">
+<style>
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geist/v5/gyByhwUxId8gMEwRGFWNOITddY4.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geist/v5/gyByhwUxId8gMEwYGFWNOITddY4.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geist/v5/gyByhwUxId8gMEwTGFWNOITddY4.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geist/v5/gyByhwUxId8gMEwSGFWNOITddY4.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/geist-latin.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geist/v5/gyByhwUxId8gMEwRGFWNOITddY4.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geist/v5/gyByhwUxId8gMEwYGFWNOITddY4.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geist/v5/gyByhwUxId8gMEwTGFWNOITddY4.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geist/v5/gyByhwUxId8gMEwSGFWNOITddY4.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("fonts/geist-latin.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geist/v5/gyByhwUxId8gMEwRGFWNOITddY4.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geist/v5/gyByhwUxId8gMEwYGFWNOITddY4.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geist/v5/gyByhwUxId8gMEwTGFWNOITddY4.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geist/v5/gyByhwUxId8gMEwSGFWNOITddY4.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("fonts/geist-latin.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geist/v5/gyByhwUxId8gMEwRGFWNOITddY4.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geist/v5/gyByhwUxId8gMEwYGFWNOITddY4.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geist/v5/gyByhwUxId8gMEwTGFWNOITddY4.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geist/v5/gyByhwUxId8gMEwSGFWNOITddY4.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("fonts/geist-latin.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geistmono/v6/or3nQ6H-1_WfwkMZI_qYFrodmhHkjkotbA.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geistmono/v6/or3nQ6H-1_WfwkMZI_qYFrMdmhHkjkotbA.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* symbols2 */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geistmono/v6/or3nQ6H-1_WfwkMZI_qYFg08vz7MhEIVVeA.woff2) format('woff2');
+  unicode-range: U+2000-2001, U+2004-2008, U+200A, U+23B8-23BD, U+2500-259F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geistmono/v6/or3nQ6H-1_WfwkMZI_qYFrgdmhHkjkotbA.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geistmono/v6/or3nQ6H-1_WfwkMZI_qYFrkdmhHkjkotbA.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/geist-mono-latin.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geistmono/v6/or3nQ6H-1_WfwkMZI_qYFrodmhHkjkotbA.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geistmono/v6/or3nQ6H-1_WfwkMZI_qYFrMdmhHkjkotbA.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* symbols2 */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geistmono/v6/or3nQ6H-1_WfwkMZI_qYFg08vz7MhEIVVeA.woff2) format('woff2');
+  unicode-range: U+2000-2001, U+2004-2008, U+200A, U+23B8-23BD, U+2500-259F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geistmono/v6/or3nQ6H-1_WfwkMZI_qYFrgdmhHkjkotbA.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geistmono/v6/or3nQ6H-1_WfwkMZI_qYFrkdmhHkjkotbA.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("fonts/geist-mono-latin.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geistmono/v6/or3nQ6H-1_WfwkMZI_qYFrodmhHkjkotbA.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geistmono/v6/or3nQ6H-1_WfwkMZI_qYFrMdmhHkjkotbA.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* symbols2 */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geistmono/v6/or3nQ6H-1_WfwkMZI_qYFg08vz7MhEIVVeA.woff2) format('woff2');
+  unicode-range: U+2000-2001, U+2004-2008, U+200A, U+23B8-23BD, U+2500-259F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geistmono/v6/or3nQ6H-1_WfwkMZI_qYFrgdmhHkjkotbA.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/geistmono/v6/or3nQ6H-1_WfwkMZI_qYFrkdmhHkjkotbA.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("fonts/geist-mono-latin.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+
+body{margin:0;background:#0A0A0B}
+a{color:#EDEDEF;text-decoration:none}a:hover{color:#FFFFFF}
+summary{cursor:pointer;list-style:none}
+summary::-webkit-details-marker{display:none}
+details[open] .faq-plus{transform:rotate(45deg)}
+details[open] p{animation:rise .35s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.rise{animation:rise .8s cubic-bezier(.2,.7,.2,1) both}
+.sweep{background-image:linear-gradient(var(--accent),var(--accent));background-repeat:no-repeat;background-position:0 94%;background-size:100% 5px;padding-bottom:6px;animation:sweep 1s .9s cubic-bezier(.6,0,.2,1) both}
+@keyframes sweep{from{background-size:0 5px}to{background-size:100% 5px}}
+.pulse{animation:pulse 2s ease-out infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(74,222,128,.6)}70%,100%{box-shadow:0 0 0 8px rgba(74,222,128,0)}}
+.caret{animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.lp{animation-duration:10s;animation-iteration-count:infinite;animation-timing-function:ease;animation-fill-mode:both}
+.cur{animation-name:cur}
+@keyframes cur{0%{opacity:0;transform:translate(120px,90px)}4%{opacity:1;transform:translate(120px,90px)}12%{transform:translate(0,0) scale(1)}13.5%{transform:translate(0,0) scale(.8)}15%{transform:translate(0,0) scale(1)}92%{opacity:1;transform:translate(0,0)}97%,100%{opacity:0;transform:translate(0,0)}}
+.press{animation-name:press,recolor}
+@keyframes recolor{0%,71%{background:#2563EB;color:#FFFFFF}74%,93%{background:var(--accent);color:#0A0A0B}97%,100%{background:#2563EB;color:#FFFFFF}}
+@keyframes press{0%,12.5%{transform:none}13.5%{transform:scale(.96)}15%,100%{transform:none}}
+.sel{animation-name:sel}
+@keyframes sel{0%,13%{opacity:0;transform:scale(1.06)}15%,92%{opacity:1;transform:none}96%,100%{opacity:0;transform:none}}
+.toast{animation-name:toast}
+@keyframes toast{0%,17%{opacity:0;transform:translate(-50%,12px)}20%,92%{opacity:1;transform:translate(-50%,0)}96%,100%{opacity:0;transform:translate(-50%,12px)}}
+.wait{animation-name:wait}
+@keyframes wait{0%,19%{opacity:0}21%,35%{opacity:1}37%,100%{opacity:0}}
+.a22{animation-name:a22}.a37{animation-name:a37}.a45{animation-name:a45}.a55{animation-name:a55}.a61{animation-name:a61}.a72{animation-name:a72}
+@keyframes a22{0%,21%{opacity:0;transform:translateY(4px)}23%,93%{opacity:1;transform:none}97%,100%{opacity:0}}
+@keyframes a37{0%,36%{opacity:0;transform:translateY(4px)}38%,93%{opacity:1;transform:none}97%,100%{opacity:0}}
+@keyframes a45{0%,44%{opacity:0;transform:translateY(4px)}46%,93%{opacity:1;transform:none}97%,100%{opacity:0}}
+@keyframes a55{0%,54%{opacity:0;transform:translateY(4px)}56%,93%{opacity:1;transform:none}97%,100%{opacity:0}}
+@keyframes a61{0%,60%{opacity:0;transform:translateY(4px)}62%,93%{opacity:1;transform:none}97%,100%{opacity:0}}
+@keyframes a72{0%,71%{opacity:0;transform:translateY(4px)}73%,93%{opacity:1;transform:none}97%,100%{opacity:0}}
+.key{animation:key 3s ease infinite}
+.k2{animation-delay:.25s}.k3{animation-delay:.5s}
+@keyframes key{0%,10%{transform:none}15%,45%{transform:translateY(1px);border-color:var(--accent);color:var(--accent)}55%,100%{transform:none}}
+.card{transition:background-color .2s ease,border-color .2s ease,translate .25s ease}
+.card:hover{background-color:#111113 !important}
+.lift:hover{translate:0 -4px;border-color:var(--accent) !important}
+.row{transition:background-color .15s ease}.row:hover{background-color:#111113}
+.copy{transition:transform .15s ease,filter .15s ease}.copy:hover{filter:brightness(1.12)}.copy:active{transform:scale(.95)}
+nav a{transition:color .15s ease}nav a:hover{color:#EDEDEF !important}
+@supports (animation-timeline: view()){.reveal{animation:rise linear both;animation-timeline:view();animation-range:entry 5% cover 25%}}
+.c8{animation-duration:8s;animation-iteration-count:infinite;animation-timing-function:ease;animation-fill-mode:both}
+.clogo{animation-name:clogo}
+@keyframes clogo{0%,6%{opacity:1;transform:none}11%{opacity:0;transform:translate(24px,24px) scale(.6)}88%{opacity:0;transform:scale(.4)}94%{opacity:1;transform:scale(1.2)}97%,100%{opacity:1;transform:none}}
+.ccur{animation-name:ccur;transform-origin:4px 3px}
+@keyframes ccur{0%,6%{opacity:0;transform:translate(-420px,-170px) rotate(-20deg)}10%{opacity:1;transform:translate(-400px,-150px) rotate(-20deg)}20%{transform:translate(-230px,-40px) rotate(-6deg)}28%{transform:translate(-90px,30px) rotate(5deg)}35%{transform:translate(-8px,4px) rotate(0deg)}40%,45%{transform:translate(0,0) scale(1)}46.5%{transform:translate(0,0) scale(.72)}48.5%{transform:translate(0,0) scale(1)}80%{opacity:1;transform:translate(0,0)}88%,100%{opacity:0;transform:translate(90px,-120px) rotate(14deg)}}
+.chov{animation-name:chov}
+@keyframes chov{0%,33%{opacity:0}37%,45%{opacity:1}47%,100%{opacity:0}}
+.csel{animation-name:csel}
+@keyframes csel{0%,46%{opacity:0;transform:scale(1.18)}49%,84%{opacity:1;transform:none}90%,100%{opacity:0;transform:none}}
+.cword{animation-name:cword}
+@keyframes cword{0%,46%{color:#EDEDEF;transform:none}48%{color:var(--accent);transform:rotate(-4deg) scale(1.05)}51%{transform:rotate(2.5deg) scale(1.02)}54%,84%{color:var(--accent);transform:none}92%,100%{color:#EDEDEF;transform:none}}
+.cring{animation-name:cring}.cring2{animation-delay:.22s}
+@keyframes cring{0%,46%{opacity:0;transform:translate(-50%,-50%) scale(.2)}47%{opacity:.9}62%,100%{opacity:0;transform:translate(-50%,-50%) scale(3.2)}}
+.cspark{animation-name:cspark}
+@keyframes cspark{0%,46%{opacity:0;transform:translate(-50%,-50%) scale(1)}48%{opacity:1}60%,100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(.3)}}
+.ctagA{animation-name:ctagA}
+@keyframes ctagA{0%,48%{opacity:0;transform:translateY(-6px)}51%,60%{opacity:1;transform:none}62%,100%{opacity:0;transform:none}}
+.ctagB{animation-name:ctagB}
+@keyframes ctagB{0%,60%{opacity:0;transform:scale(.85)}63%{opacity:1;transform:scale(1.06)}65%,84%{opacity:1;transform:none}90%,100%{opacity:0;transform:none}}
+.cbox{animation-name:cbox}
+@keyframes cbox{0%,62%{border-color:#2E2E35;box-shadow:0 0 0 0 transparent}66%{border-color:var(--accent);box-shadow:0 0 0 6px color-mix(in srgb,var(--accent) 22%,transparent)}80%,100%{border-color:#2E2E35;box-shadow:0 0 0 0 transparent}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none !important;transition:none !important}.wait{opacity:0}}
+
+</style>
+</head>
+<body>
+
+
+<div style="--accent: #FF7A45; background: #0A0A0B; color: #EDEDEF; font-family: Geist, Inter, system-ui, sans-serif; font-size: 16px; line-height: 1.55; min-height: 100vh" data-canvas-width="1440" data-canvas-height="5200" data-document-role="page" data-label="Pointer — landing page">
+
+<!-- NAV -->
+<header style="border-bottom: 1px solid #1C1C21">
+<div style="max-width: 1200px; margin: 0 auto; padding: 16px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+<a href="#top" style="display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 17px; letter-spacing: -0.01em">
+<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3l15 7.2-6.4 1.9L9.9 18.6z" fill="#FF7A45"></path></svg>
+pointer
+</a>
+<nav aria-label="Primary" style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px; font-size: 14px">
+<a href="#how" style="padding: 10px 12px; color: #A1A1AA">How it works</a>
+<a href="#payload" style="padding: 10px 12px; color: #A1A1AA">Payload</a>
+<a href="#stacks" style="padding: 10px 12px; color: #A1A1AA">Stacks</a>
+<a href="#safety" style="padding: 10px 12px; color: #A1A1AA">Safety</a>
+<a href="#faq" style="padding: 10px 12px; color: #A1A1AA">FAQ</a>
+<a href="https://github.com/raghavendra7533/pointer" style="margin-left: 8px; display: flex; align-items: center; gap: 8px; padding: 9px 14px; border: 1px solid #2E2E35; border-radius: 8px; font-family: 'Geist Mono', monospace; font-size: 13px">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"></path></svg>
+GitHub
+</a>
+</nav>
+</div>
+</header>
+
+<!-- HERO -->
+<section id="top" style="max-width: 1200px; margin: 0 auto; padding: 96px 24px 64px">
+<div class="rise" style="display: inline-flex; align-items: center; gap: 10px; padding: 6px 12px; border: 1px solid #232328; border-radius: 999px; font-family: 'Geist Mono', monospace; font-size: 12px; color: #A1A1AA">
+<span class="pulse" style="width: 6px; height: 6px; border-radius: 50%; background: #4ADE80"></span>
+v0.1.0 · MIT · local only
+</div>
+<h1 class="rise" style="margin: 28px 0 0; font-size: clamp(44px, 7vw, 88px); line-height: 0.98; letter-spacing: -0.045em; font-weight: 600; max-width: 960px; animation-delay: .1s">Stop describing UI.<br><span class="sweep" style="color: #FF7A45">Click it.</span></h1>
+<p class="rise" style="animation-delay: .2s; margin: 28px 0 0; max-width: 620px; font-size: 19px; color: #A1A1AA; line-height: 1.6">Click any element in Chrome and Pointer hands it to Claude Code, Codex or any MCP agent: the DOM, computed styles, a screenshot, and the file and line that render it.</p>
+
+<div class="rise" style="animation-delay: .3s; margin-top: 40px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px">
+<div style="display: flex; align-items: center; gap: 4px; padding: 6px 6px 6px 18px; background: #111113; border: 1px solid #2E2E35; border-radius: 10px; font-family: 'Geist Mono', monospace; font-size: 15px">
+<span style="color: #8B8B94">$</span>
+<span style="margin-left: 8px; margin-right: 14px">npx pointer-bridge setup</span>
+<button type="button" class="copy" style="min-width: 76px; height: 44px; padding: 0 18px; border: 0; border-radius: 7px; background: #FF7A45; color: #0A0A0B; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer">Copy</button>
+</div>
+<a href="#how" style="font-size: 15px; color: #A1A1AA; padding: 12px 4px">See the three steps →</a>
+</div>
+
+<!-- Demo -->
+<div class="rise" style="animation-delay: .45s; margin-top: 72px; display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); border: 1px solid #232328; border-radius: 14px; overflow: hidden; background: #0E0E10">
+<!-- Browser pane -->
+<div style="border-right: 1px solid #232328; min-width: 0">
+<div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid #232328; background: #111113">
+<div style="display: flex; gap: 6px"><span style="width: 10px; height: 10px; border-radius: 50%; background: #2E2E35"></span><span style="width: 10px; height: 10px; border-radius: 50%; background: #2E2E35"></span><span style="width: 10px; height: 10px; border-radius: 50%; background: #2E2E35"></span></div>
+<div style="flex: 1; padding: 6px 12px; border-radius: 6px; background: #0A0A0B; font-family: 'Geist Mono', monospace; font-size: 12px; color: #8B8B94">localhost:3000/pricing</div>
+</div>
+<div style="position: relative; padding: 56px 24px 112px; display: flex; justify-content: center; background: #F4F4F5">
+<div style="width: 280px; padding: 24px; background: #FFFFFF; border: 1px solid #E4E4E7; border-radius: 12px; color: #18181B; box-shadow: 0 1px 2px rgba(0,0,0,0.05)">
+<div style="font-weight: 600; font-size: 16px">Pro</div>
+<div style="font-size: 13px; color: #52525B; margin-top: 2px">For growing teams.</div>
+<div style="margin-top: 20px; font-size: 32px; font-weight: 600; letter-spacing: -0.02em">$29<span style="font-size: 13px; font-weight: 400; color: #52525B"> / month</span></div>
+<div style="position: relative; margin-top: 36px">
+<div class="lp sel" style="position: absolute; top: -30px; left: -5px; padding: 3px 8px; border-radius: 4px; background: #FF7A45; color: #0A0A0B; font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 500; white-space: nowrap">button.btn-primary · PricingCard</div>
+<div class="lp press" style="border-radius: 8px; padding: 11px; text-align: center; background: #2563EB; color: #FFFFFF; font-size: 14px; font-weight: 500">Upgrade plan</div>
+<div class="lp sel" style="position: absolute; inset: -5px; border: 2px solid #FF7A45; border-radius: 11px; pointer-events: none"></div>
+<div style="margin-top: 10px; border: 1px solid #E4E4E7; border-radius: 8px; padding: 10px; text-align: center; color: #18181B; font-size: 14px; font-weight: 500">Contact sales</div>
+<svg class="lp cur" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="position: absolute; right: 70px; top: 26px"><path d="M4 3l15 7.2-6.4 1.9L9.9 18.6z" fill="#0A0A0B" stroke="#FFFFFF" stroke-width="1.4" stroke-linejoin="round"></path></svg>
+</div>
+</div>
+<!-- toast -->
+<div class="lp toast" style="position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%); width: min(360px, calc(100% - 32px)); box-sizing: border-box; padding: 12px 14px; background: #111113; border: 1px solid #2E2E35; border-radius: 10px; box-shadow: 0 12px 32px rgba(0,0,0,0.25); font-size: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; font-family: 'Geist Mono', monospace; color: #A1A1AA">
+<span>→ button.btn-primary</span>
+<span style="display: grid; justify-items: end">
+<span class="lp wait" style="grid-area: 1 / 1; display: flex; align-items: center; gap: 6px; color: #F2C46B; white-space: nowrap"><span class="pulse" style="width: 6px; height: 6px; border-radius: 50%; background: #F2C46B"></span>waiting for agent…</span>
+<span class="lp a37" style="grid-area: 1 / 1; display: flex; align-items: center; gap: 6px; color: #4ADE80; white-space: nowrap"><span style="width: 6px; height: 6px; border-radius: 50%; background: #4ADE80"></span>agent has it</span>
+</span>
+</div>
+<div style="margin-top: 8px; padding: 8px 10px; border: 1px solid #232328; border-radius: 6px; color: #EDEDEF">make this the primary button style</div>
+</div>
+</div>
+</div>
+<!-- Terminal pane -->
+<div style="min-width: 0; display: flex; flex-direction: column; background: #0A0A0B">
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid #232328; background: #111113; font-family: 'Geist Mono', monospace; font-size: 12px; color: #8B8B94">
+<span>~/acme-web — claude</span><span>zsh</span>
+</div>
+<div style="padding: 24px; font-family: 'Geist Mono', monospace; font-size: 13.5px; line-height: 1.9; color: #A1A1AA; overflow-x: auto">
+<div style="display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid #1C1C21"><svg width="45" height="25" viewBox="0 0 9 5" aria-hidden="true" shape-rendering="crispEdges"><g fill="#D97757"><rect x="1" y="0" width="7" height="1"/><rect x="0" y="1" width="9" height="2"/><rect x="1" y="3" width="7" height="1"/><rect x="2" y="4" width="1" height="1"/><rect x="3" y="4" width="1" height="1"/><rect x="5" y="4" width="1" height="1"/><rect x="6" y="4" width="1" height="1"/></g><g fill="#0A0A0B"><rect x="2" y="1" width="1" height="1"/><rect x="6" y="1" width="1" height="1"/></g></svg><div style="line-height: 1.5"><div style="color: #EDEDEF; font-weight: 500">Claude Code</div><div style="color: #8B8B94; font-size: 12px">pointer · mcp connected</div></div></div>
+<div class="lp a22"><span style="color: #FF7A45">›</span> <span style="color: #EDEDEF">make this the primary button style</span></div>
+<div class="lp a37" style="margin-top: 16px">⏺ Read the selection <span style="color: #8AB4F8">button.btn-primary</span></div>
+<div class="lp a45" style="padding-left: 18px">component <span style="color: #EDEDEF">PricingPage › PricingCard</span></div>
+<div class="lp a45" style="padding-left: 18px">source <span style="color: #9FD4A3">src/components/PricingCard.tsx:42</span> <span style="color: #8B8B94">(exact)</span></div>
+<div class="lp a55" style="margin-top: 16px">⏺ Editing <span style="color: #9FD4A3">src/components/PricingCard.tsx:42</span></div>
+<div class="lp a61" style="padding-left: 18px"><span style="color: #F28B82">- &lt;Button className="btn-primary"&gt;</span></div>
+<div class="lp a61" style="padding-left: 18px"><span style="color: #9FD4A3">+ &lt;Button variant="primary"&gt;</span></div>
+<div class="lp a72" style="margin-top: 16px"><span style="color: #4ADE80">✓</span> <span style="color: #EDEDEF">Button now uses the primary variant.</span><span class="caret" style="display: inline-block; width: 8px; height: 16px; margin-left: 4px; vertical-align: -3px; background: #EDEDEF"></span></div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" style="border-top: 1px solid #1C1C21">
+<div style="max-width: 1200px; margin: 0 auto; padding: 112px 24px">
+<div style="font-family: 'Geist Mono', monospace; font-size: 13px; color: #8B8B94"><span style="color: #FF7A45">01</span> / how it works</div>
+<h2 class="reveal" style="margin: 16px 0 0; font-size: clamp(32px, 4vw, 48px); line-height: 1.08; letter-spacing: -0.035em; font-weight: 600; max-width: 720px">Three steps. One of them is clicking.</h2>
+<p style="margin: 18px 0 0; max-width: 560px; font-size: 17px; color: #A1A1AA">No pasting HTML. No "the second blue button in the header card". The agent gets the exact element and where it lives in your code.</p>
+
+<div style="margin-top: 56px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1px; background: #232328; border: 1px solid #232328; border-radius: 14px; overflow: hidden">
+<div class="card reveal" style="padding: 32px; background: #0A0A0B; display: flex; flex-direction: column; gap: 14px">
+<div style="font-family: 'Geist Mono', monospace; font-size: 13px; color: #FF7A45">step 1</div>
+<h3 style="margin: 0; font-size: 20px; font-weight: 600; letter-spacing: -0.01em">Run setup</h3>
+<p style="margin: 0; color: #A1A1AA; font-size: 15px">Registers the MCP server with Claude Code and Codex, installs the hook that delivers your selection, and unpacks the extension.</p>
+<code style="margin-top: auto; padding: 12px 14px; background: #111113; border: 1px solid #232328; border-radius: 8px; font-family: 'Geist Mono', monospace; font-size: 13px; color: #EDEDEF"><span style="color: #8B8B94">$</span> npx pointer-bridge setup</code>
+</div>
+<div class="card reveal" style="padding: 32px; background: #0A0A0B; display: flex; flex-direction: column; gap: 14px">
+<div style="font-family: 'Geist Mono', monospace; font-size: 13px; color: #FF7A45">step 2</div>
+<h3 style="margin: 0; font-size: 20px; font-weight: 600; letter-spacing: -0.01em">Load the extension once</h3>
+<p style="margin: 0; color: #A1A1AA; font-size: 15px">Setup opens the extensions page and copies the folder path for you. Turn on Developer mode, click <span style="color: #EDEDEF">Load unpacked</span>, paste.</p>
+<code style="margin-top: auto; padding: 12px 14px; background: #111113; border: 1px solid #232328; border-radius: 8px; font-family: 'Geist Mono', monospace; font-size: 13px; color: #EDEDEF">chrome://extensions</code>
+</div>
+<div class="card reveal" style="padding: 32px; background: #0A0A0B; display: flex; flex-direction: column; gap: 14px">
+<div style="font-family: 'Geist Mono', monospace; font-size: 13px; color: #FF7A45">step 3</div>
+<h3 style="margin: 0; font-size: 20px; font-weight: 600; letter-spacing: -0.01em">Click and ask</h3>
+<p style="margin: 0; color: #A1A1AA; font-size: 15px">Pick an element, add an optional note. The toast turns green when your agent has it.</p>
+<div style="margin-top: auto; display: flex; align-items: center; gap: 6px; font-family: 'Geist Mono', monospace; font-size: 13px">
+<kbd class="key" style="padding: 8px 12px; background: #111113; border: 1px solid #2E2E35; border-bottom-width: 2px; border-radius: 6px; font-family: inherit">Alt</kbd><span style="color: #8B8B94">+</span>
+<kbd class="key k2" style="padding: 8px 12px; background: #111113; border: 1px solid #2E2E35; border-bottom-width: 2px; border-radius: 6px; font-family: inherit">Shift</kbd><span style="color: #8B8B94">+</span>
+<kbd class="key k3" style="padding: 8px 12px; background: #111113; border: 1px solid #2E2E35; border-bottom-width: 2px; border-radius: 6px; font-family: inherit">P</kbd>
+</div>
+</div>
+</div>
+<p style="margin: 24px 0 0; font-size: 15px; color: #A1A1AA">Something off? <code style="font-family: 'Geist Mono', monospace; color: #EDEDEF">npx pointer-bridge doctor</code> checks every link from browser to agent and prints the fix.</p>
+</div>
+</section>
+
+<!-- PAYLOAD -->
+<section id="payload" style="border-top: 1px solid #1C1C21">
+<div style="max-width: 1200px; margin: 0 auto; padding: 112px 24px">
+<div style="font-family: 'Geist Mono', monospace; font-size: 13px; color: #8B8B94"><span style="color: #FF7A45">02</span> / what the agent gets</div>
+<h2 class="reveal" style="margin: 16px 0 0; font-size: clamp(32px, 4vw, 48px); line-height: 1.08; letter-spacing: -0.035em; font-weight: 600; max-width: 760px">Not a screenshot. The element, and its source.</h2>
+
+<div style="margin-top: 56px; display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start">
+<div class="reveal" style="flex: 1 1 460px; min-width: 0; border: 1px solid #232328; border-radius: 14px; overflow: hidden; background: #0E0E10">
+<div style="display: flex; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid #232328; background: #111113; font-family: 'Geist Mono', monospace; font-size: 12px; color: #8B8B94"><span>selection.json</span><span>example</span></div>
+<pre style="margin: 0; padding: 24px; font-family: 'Geist Mono', monospace; font-size: 13px; line-height: 1.75; color: #A1A1AA; overflow-x: auto">{
+  <span style="color: #8AB4F8">"selector"</span>: <span style="color: #9FD4A3">"div.card:nth-child(2) button.btn-primary"</span>,
+  <span style="color: #8AB4F8">"text"</span>: <span style="color: #9FD4A3">"Upgrade plan"</span>,
+  <span style="color: #8AB4F8">"source"</span>: {
+    <span style="color: #8AB4F8">"components"</span>: [<span style="color: #9FD4A3">"PricingPage"</span>, <span style="color: #9FD4A3">"PricingCard"</span>],
+    <span style="color: #8AB4F8">"file"</span>: <span style="color: #9FD4A3">"src/components/PricingCard.tsx"</span>,
+    <span style="color: #8AB4F8">"line"</span>: <span style="color: #F2C46B">42</span>,
+    <span style="color: #8AB4F8">"confidence"</span>: <span style="color: #FF7A45">"exact"</span>
+  },
+  <span style="color: #8AB4F8">"styles"</span>: { <span style="color: #8AB4F8">"background"</span>: <span style="color: #9FD4A3">"#2563eb"</span>, <span style="color: #8AB4F8">"radius"</span>: <span style="color: #9FD4A3">"8px"</span> },
+  <span style="color: #8AB4F8">"note"</span>: <span style="color: #9FD4A3">"make this the primary variant"</span>,
+  <span style="color: #8AB4F8">"screenshot"</span>: <span style="color: #9FD4A3">"crop.png"</span>
+}</pre>
+</div>
+
+<div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column">
+<div style="padding: 0 0 28px; border-bottom: 1px solid #1C1C21">
+<h3 style="margin: 0; font-size: 18px; font-weight: 600">Precise context</h3>
+<p style="margin: 8px 0 0; color: #A1A1AA; font-size: 15px">Tag, selector, visible text, trimmed HTML, key computed styles, ancestors and an optional cropped screenshot. Shift-click to pick up to ten elements in order.</p>
+</div>
+<div style="padding: 28px 0; border-bottom: 1px solid #1C1C21">
+<h3 style="margin: 0; font-size: 18px; font-weight: 600">Honest source mapping</h3>
+<p style="margin: 8px 0 0; color: #A1A1AA; font-size: 15px">The component chain and file, with a stated confidence. A wrong path is worse than none, so Pointer never guesses.</p>
+<div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; font-family: 'Geist Mono', monospace; font-size: 12px">
+<span style="padding: 4px 10px; border-radius: 999px; background: rgba(255,122,69,0.14); color: #FF7A45">exact</span>
+<span style="padding: 4px 10px; border-radius: 999px; border: 1px solid #2E2E35; color: #EDEDEF">component-only</span>
+<span style="padding: 4px 10px; border-radius: 999px; border: 1px dashed #2E2E35; color: #A1A1AA">none</span>
+</div>
+</div>
+<div style="padding: 28px 0; border-bottom: 1px solid #1C1C21">
+<h3 style="margin: 0; font-size: 18px; font-weight: 600">Your own words</h3>
+<p style="margin: 8px 0 0; color: #A1A1AA; font-size: 15px">Type an instruction in the toast and it travels with the selection. No MCP? "Copy as prompt" puts a formatted block on your clipboard.</p>
+</div>
+<div style="padding: 28px 0 0">
+<h3 style="margin: 0; font-size: 18px; font-weight: 600">Delivery you can see</h3>
+<p style="margin: 8px 0 0; color: #A1A1AA; font-size: 15px">Pointer tells you when the agent actually read the selection, and what to do if it hasn't. No guessing whether it worked.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- STACKS -->
+<section id="stacks" style="border-top: 1px solid #1C1C21">
+<div style="max-width: 1200px; margin: 0 auto; padding: 112px 24px">
+<div style="font-family: 'Geist Mono', monospace; font-size: 13px; color: #8B8B94"><span style="color: #FF7A45">03</span> / any stack</div>
+<h2 class="reveal" style="margin: 16px 0 0; font-size: clamp(32px, 4vw, 48px); line-height: 1.08; letter-spacing: -0.035em; font-weight: 600; max-width: 760px">Works with the framework you already use.</h2>
+<p style="margin: 18px 0 0; max-width: 600px; font-size: 17px; color: #A1A1AA">Pointer always sends grep-friendly hints. On top of that it maps to a component and file whenever your dev build exposes it.</p>
+
+<div style="margin-top: 48px; border: 1px solid #232328; border-radius: 14px; overflow-x: auto">
+<table style="width: 100%; min-width: 720px; border-collapse: collapse; font-size: 14px">
+<thead>
+<tr style="background: #111113; font-family: 'Geist Mono', monospace; font-size: 12px; color: #8B8B94; text-align: left">
+<th scope="col" style="padding: 14px 20px; font-weight: 500">stack</th>
+<th scope="col" style="padding: 14px 20px; font-weight: 500">how</th>
+<th scope="col" style="padding: 14px 20px; font-weight: 500">you get</th>
+</tr>
+</thead>
+<tbody>
+<tr class="row" style="border-top: 1px solid #1C1C21"><td style="padding: 16px 20px; font-weight: 500">React 17–19</td><td style="padding: 16px 20px; font-family: 'Geist Mono', monospace; font-size: 13px; color: #A1A1AA">fiber walk, _debugSource, creation stack</td><td style="padding: 16px 20px; color: #EDEDEF">Component chain, file, line</td></tr>
+<tr class="row" style="border-top: 1px solid #1C1C21"><td style="padding: 16px 20px; font-weight: 500">Vue 2 &amp; 3</td><td style="padding: 16px 20px; font-family: 'Geist Mono', monospace; font-size: 13px; color: #A1A1AA">component instance, __file</td><td style="padding: 16px 20px; color: #EDEDEF">Component chain, file</td></tr>
+<tr class="row" style="border-top: 1px solid #1C1C21"><td style="padding: 16px 20px; font-weight: 500">Svelte 4 &amp; 5</td><td style="padding: 16px 20px; font-family: 'Geist Mono', monospace; font-size: 13px; color: #A1A1AA">__svelte_meta</td><td style="padding: 16px 20px; color: #EDEDEF">File, line, column</td></tr>
+<tr class="row" style="border-top: 1px solid #1C1C21"><td style="padding: 16px 20px; font-weight: 500">Angular</td><td style="padding: 16px 20px; font-family: 'Geist Mono', monospace; font-size: 13px; color: #A1A1AA">ng.getOwningComponent</td><td style="padding: 16px 20px; color: #EDEDEF">Component names</td></tr>
+<tr class="row" style="border-top: 1px solid #1C1C21"><td style="padding: 16px 20px; font-weight: 500">Astro, inspector plugins</td><td style="padding: 16px 20px; font-family: 'Geist Mono', monospace; font-size: 13px; color: #A1A1AA">dev-plugin data-* attributes</td><td style="padding: 16px 20px; color: #EDEDEF">File, line</td></tr>
+<tr class="row" style="border-top: 1px solid #1C1C21"><td style="padding: 16px 20px; font-weight: 500">Next.js routes</td><td style="padding: 16px 20px; font-family: 'Geist Mono', monospace; font-size: 13px; color: #A1A1AA">route file from the URL, labelled inferred</td><td style="padding: 16px 20px; color: #EDEDEF">Page file hint</td></tr>
+<tr class="row" style="border-top: 1px solid #1C1C21"><td style="padding: 16px 20px; font-weight: 500">Anything else</td><td style="padding: 16px 20px; font-family: 'Geist Mono', monospace; font-size: 13px; color: #A1A1AA">window.__POINTER_SOURCE__ = (el) =&gt; …</td><td style="padding: 16px 20px; color: #EDEDEF">Whatever you return</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+
+<!-- AGENTS -->
+<section id="agents" style="border-top: 1px solid #1C1C21">
+<div style="max-width: 1200px; margin: 0 auto; padding: 112px 24px">
+<div style="font-family: 'Geist Mono', monospace; font-size: 13px; color: #8B8B94"><span style="color: #FF7A45">04</span> / agents</div>
+<h2 class="reveal" style="margin: 16px 0 0; font-size: clamp(32px, 4vw, 48px); line-height: 1.08; letter-spacing: -0.035em; font-weight: 600; max-width: 760px">Agent-agnostic through MCP.</h2>
+<div style="margin-top: 48px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px">
+<div class="card lift reveal" style="padding: 28px; border: 1px solid #232328; border-radius: 14px; background: #0E0E10; display: flex; flex-direction: column; gap: 10px">
+<div style="display:flex;align-items:center;gap:12px"><svg width="36" height="20" viewBox="0 0 9 5" aria-hidden="true" shape-rendering="crispEdges"><g fill="#D97757"><rect x="1" y="0" width="7" height="1"/><rect x="0" y="1" width="9" height="2"/><rect x="1" y="3" width="7" height="1"/><rect x="2" y="4" width="1" height="1"/><rect x="3" y="4" width="1" height="1"/><rect x="5" y="4" width="1" height="1"/><rect x="6" y="4" width="1" height="1"/></g><g fill="#0A0A0B"><rect x="2" y="1" width="1" height="1"/><rect x="6" y="1" width="1" height="1"/></g></svg><h3 style="margin: 0; font-size: 18px; font-weight: 600">Claude Code</h3></div>
+<p style="margin: 0; color: #A1A1AA; font-size: 15px">MCP tool plus a prompt hook that delivers your selection automatically. Setup wires both.</p>
+<div style="margin-top: auto; padding-top: 12px; font-family: 'Geist Mono', monospace; font-size: 12px; color: #8B8B94">mcp + hook</div>
+</div>
+<div class="card lift reveal" style="padding: 28px; border: 1px solid #232328; border-radius: 14px; background: #0E0E10; display: flex; flex-direction: column; gap: 10px">
+<div style="display:flex;align-items:center;gap:12px"><svg fill="currentColor" fill-rule="evenodd" height="26" style="flex:none;color:#EDEDEF" aria-hidden="true" viewBox="0 0 24 24" width="26" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M8.086.457a6.105 6.105 0 013.046-.415c1.333.153 2.521.72 3.564 1.7a.117.117 0 00.107.029c1.408-.346 2.762-.224 4.061.366l.063.03.154.076c1.357.703 2.33 1.77 2.918 3.198.278.679.418 1.388.421 2.126a5.655 5.655 0 01-.18 1.631.167.167 0 00.04.155 5.982 5.982 0 011.578 2.891c.385 1.901-.01 3.615-1.183 5.14l-.182.22a6.063 6.063 0 01-2.934 1.851.162.162 0 00-.108.102c-.255.736-.511 1.364-.987 1.992-1.199 1.582-2.962 2.462-4.948 2.451-1.583-.008-2.986-.587-4.21-1.736a.145.145 0 00-.14-.032c-.518.167-1.04.191-1.604.185a5.924 5.924 0 01-2.595-.622 6.058 6.058 0 01-2.146-1.781c-.203-.269-.404-.522-.551-.821a7.74 7.74 0 01-.495-1.283 6.11 6.11 0 01-.017-3.064.166.166 0 00.008-.074.115.115 0 00-.037-.064 5.958 5.958 0 01-1.38-2.202 5.196 5.196 0 01-.333-1.589 6.915 6.915 0 01.188-2.132c.45-1.484 1.309-2.648 2.577-3.493.282-.188.55-.334.802-.438.286-.12.573-.22.861-.304a.129.129 0 00.087-.087A6.016 6.016 0 015.635 2.31C6.315 1.464 7.132.846 8.086.457zm-.804 7.85a.848.848 0 00-1.473.842l1.694 2.965-1.688 2.848a.849.849 0 001.46.864l1.94-3.272a.849.849 0 00.007-.854l-1.94-3.393zm5.446 6.24a.849.849 0 000 1.695h4.848a.849.849 0 000-1.696h-4.848z"></path></svg><h3 style="margin: 0; font-size: 18px; font-weight: 600">Codex</h3></div>
+<p style="margin: 0; color: #A1A1AA; font-size: 15px">Registered as an MCP server. Say "the selected element" and the agent fetches it.</p>
+<div style="margin-top: auto; padding-top: 12px; font-family: 'Geist Mono', monospace; font-size: 12px; color: #8B8B94">mcp</div>
+</div>
+<div class="card lift reveal" style="padding: 28px; border: 1px solid #232328; border-radius: 14px; background: #0E0E10; display: flex; flex-direction: column; gap: 10px">
+<div style="display:flex;align-items:center;gap:12px"><svg fill="currentColor" fill-rule="evenodd" height="26" style="flex:none;color:#EDEDEF" aria-hidden="true" viewBox="0 0 24 24" width="26" xmlns="http://www.w3.org/2000/svg"><path d="M15.688 2.343a2.588 2.588 0 00-3.61 0l-9.626 9.44a.863.863 0 01-1.203 0 .823.823 0 010-1.18l9.626-9.44a4.313 4.313 0 016.016 0 4.116 4.116 0 011.204 3.54 4.3 4.3 0 013.609 1.18l.05.05a4.115 4.115 0 010 5.9l-8.706 8.537a.274.274 0 000 .393l1.788 1.754a.823.823 0 010 1.18.863.863 0 01-1.203 0l-1.788-1.753a1.92 1.92 0 010-2.754l8.706-8.538a2.47 2.47 0 000-3.54l-.05-.049a2.588 2.588 0 00-3.607-.003l-7.172 7.034-.002.002-.098.097a.863.863 0 01-1.204 0 .823.823 0 010-1.18l7.273-7.133a2.47 2.47 0 00-.003-3.537z"></path><path d="M14.485 4.703a.823.823 0 000-1.18.863.863 0 00-1.204 0l-7.119 6.982a4.115 4.115 0 000 5.9 4.314 4.314 0 006.016 0l7.12-6.982a.823.823 0 000-1.18.863.863 0 00-1.204 0l-7.119 6.982a2.588 2.588 0 01-3.61 0 2.47 2.47 0 010-3.54l7.12-6.982z"></path></svg><h3 style="margin: 0; font-size: 18px; font-weight: 600">Anything with MCP</h3></div>
+<p style="margin: 0; color: #A1A1AA; font-size: 15px">A stdio server, or paste with "Copy as prompt" when there's no MCP at all.</p>
+<code style="margin-top: auto; padding: 10px 12px; background: #0A0A0B; border: 1px solid #232328; border-radius: 8px; font-family: 'Geist Mono', monospace; font-size: 12px; color: #EDEDEF">npx -y pointer-bridge mcp</code>
+</div>
+</div>
+</div>
+</section>
+
+<!-- SAFETY -->
+<section id="safety" style="border-top: 1px solid #1C1C21">
+<div style="max-width: 1200px; margin: 0 auto; padding: 112px 24px">
+<div style="font-family: 'Geist Mono', monospace; font-size: 13px; color: #8B8B94"><span style="color: #FF7A45">05</span> / safe by default</div>
+<h2 class="reveal" style="margin: 16px 0 0; font-size: clamp(32px, 4vw, 48px); line-height: 1.08; letter-spacing: -0.035em; font-weight: 600; max-width: 760px">Your page stays on your machine.</h2>
+<div style="margin-top: 48px; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); column-gap: 48px">
+<div class="reveal" style="display: flex; gap: 16px; padding: 22px 0; border-top: 1px solid #1C1C21"><span style="font-family: 'Geist Mono', monospace; color: #FF7A45">✓</span><div><div style="font-weight: 600">Loopback only</div><div style="margin-top: 4px; color: #A1A1AA; font-size: 15px">The bridge listens on 127.0.0.1 with a token, plus <code style="font-family: 'Geist Mono', monospace; color: #EDEDEF">Host</code> and <code style="font-family: 'Geist Mono', monospace; color: #EDEDEF">Origin</code> checks.</div></div></div>
+<div class="reveal" style="display: flex; gap: 16px; padding: 22px 0; border-top: 1px solid #1C1C21"><span style="font-family: 'Geist Mono', monospace; color: #FF7A45">✓</span><div><div style="font-weight: 600">No form values</div><div style="margin-top: 4px; color: #A1A1AA; font-size: 15px">Inputs are never read and passwords are masked.</div></div></div>
+<div class="reveal" style="display: flex; gap: 16px; padding: 22px 0; border-top: 1px solid #1C1C21"><span style="font-family: 'Geist Mono', monospace; color: #FF7A45">✓</span><div><div style="font-weight: 600">Auto-pairing</div><div style="margin-top: 4px; color: #A1A1AA; font-size: 15px">Pins your extension on first connect, so a web page cannot impersonate it.</div></div></div>
+<div class="reveal" style="display: flex; gap: 16px; padding: 22px 0; border-top: 1px solid #1C1C21"><span style="font-family: 'Geist Mono', monospace; color: #FF7A45">✓</span><div><div style="font-weight: 600">Sensitive sites off</div><div style="margin-top: 4px; color: #A1A1AA; font-size: 15px">Banking, mail and sign-in pages are blocked by default.</div></div></div>
+<div class="reveal" style="display: flex; gap: 16px; padding: 22px 0; border-top: 1px solid #1C1C21"><span style="font-family: 'Geist Mono', monospace; color: #FF7A45">✓</span><div><div style="font-weight: 600">No telemetry, no accounts</div><div style="margin-top: 4px; color: #A1A1AA; font-size: 15px">No hosted service. Nothing leaves your machine except to your agent.</div></div></div>
+<div class="reveal" style="display: flex; gap: 16px; padding: 22px 0; border-top: 1px solid #1C1C21"><span style="font-family: 'Geist Mono', monospace; color: #FF7A45">✓</span><div><div style="font-weight: 600">Page content marked untrusted</div><div style="margin-top: 4px; color: #A1A1AA; font-size: 15px">Fenced before your model sees it. Keep your agent's permission prompts on.</div></div></div>
+</div>
+</div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="border-top: 1px solid #1C1C21">
+<div style="max-width: 1200px; margin: 0 auto; padding: 112px 24px; display: flex; flex-wrap: wrap; gap: 48px">
+<div style="flex: 1 1 280px">
+<div style="font-family: 'Geist Mono', monospace; font-size: 13px; color: #8B8B94"><span style="color: #FF7A45">06</span> / faq</div>
+<h2 class="reveal" style="margin: 16px 0 0; font-size: clamp(32px, 4vw, 48px); line-height: 1.08; letter-spacing: -0.035em; font-weight: 600">Questions people ask.</h2>
+</div>
+<div style="flex: 2 1 560px; min-width: 0">
+<details style="border-top: 1px solid #232328"><summary style="display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 22px 0; font-size: 17px; font-weight: 500">Is it on the Chrome Web Store?<span class="faq-plus" style="font-family: 'Geist Mono', monospace; color: #8B8B94; font-size: 20px; transition: transform .15s">+</span></summary><p style="margin: 0 0 22px; color: #A1A1AA; font-size: 15px; max-width: 620px">Not yet. Setup unpacks the extension and opens the extensions page, so installing is one "Load unpacked". Works in Chrome, Edge and other Chromium browsers.</p></details>
+<details style="border-top: 1px solid #232328"><summary style="display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 22px 0; font-size: 17px; font-weight: 500">Does it work on production sites?<span class="faq-plus" style="font-family: 'Geist Mono', monospace; color: #8B8B94; font-size: 20px; transition: transform .15s">+</span></summary><p style="margin: 0 0 22px; color: #A1A1AA; font-size: 15px; max-width: 620px">Yes for hints: selector, classes and text. Component and file mapping needs a dev build, since production builds strip that data, and Pointer says which confidence level you got.</p></details>
+<details style="border-top: 1px solid #232328"><summary style="display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 22px 0; font-size: 17px; font-weight: 500">Does it edit my files or the page?<span class="faq-plus" style="font-family: 'Geist Mono', monospace; color: #8B8B94; font-size: 20px; transition: transform .15s">+</span></summary><p style="margin: 0 0 22px; color: #A1A1AA; font-size: 15px; max-width: 620px">No. Pointer only reads the element you click. Your agent makes any edits, through its own permission prompts.</p></details>
+<details style="border-top: 1px solid #232328"><summary style="display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 22px 0; font-size: 17px; font-weight: 500">What if my agent has no MCP support?<span class="faq-plus" style="font-family: 'Geist Mono', monospace; color: #8B8B94; font-size: 20px; transition: transform .15s">+</span></summary><p style="margin: 0 0 22px; color: #A1A1AA; font-size: 15px; max-width: 620px">Use "Copy as prompt". It puts the same context on your clipboard as a formatted block you can paste anywhere.</p></details>
+<details style="border-top: 1px solid #232328; border-bottom: 1px solid #232328"><summary style="display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 22px 0; font-size: 17px; font-weight: 500">Is it free?<span class="faq-plus" style="font-family: 'Geist Mono', monospace; color: #8B8B94; font-size: 20px; transition: transform .15s">+</span></summary><p style="margin: 0 0 22px; color: #A1A1AA; font-size: 15px; max-width: 620px">Yes. MIT licensed and open source.</p></details>
+</div>
+</div>
+</section>
+
+<!-- CTA -->
+<section style="border-top: 1px solid #1C1C21; overflow: hidden">
+<div style="max-width: 1200px; margin: 0 auto; padding: 128px 24px; display: flex; flex-direction: column; align-items: flex-start; gap: 28px">
+<svg class="c8 clogo" width="40" height="40" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3l15 7.2-6.4 1.9L9.9 18.6z" fill="#FF7A45"></path></svg>
+<h2 class="reveal" style="margin: 0; font-size: clamp(40px, 6vw, 72px); line-height: 1.05; letter-spacing: -0.045em; font-weight: 600; max-width: 820px">Point at it. Say what you <span class="c8 cword" style="position: relative; display: inline-block; white-space: nowrap">want.<span class="c8 chov" aria-hidden="true" style="position: absolute; inset: -4px -10px -2px -8px; border: 2px dashed #8B8B94; border-radius: 10px; pointer-events: none"></span><span class="c8 csel" aria-hidden="true" style="position: absolute; inset: -4px -10px -2px -8px; border: 2px solid #FF7A45; border-radius: 10px; background: rgba(255,122,69,0.14); pointer-events: none"></span><span class="c8 cring" aria-hidden="true" style="position: absolute; left: 62%; top: 58%; width: 40px; height: 40px; border: 2px solid #FF7A45; border-radius: 50%; pointer-events: none"></span><span class="c8 cring cring2" aria-hidden="true" style="position: absolute; left: 62%; top: 58%; width: 40px; height: 40px; border: 2px solid #FF7A45; border-radius: 50%; pointer-events: none"></span><span class="c8 cspark" aria-hidden="true" style="--dx: 0px; --dy: -64px; position: absolute; left: 62%; top: 58%; width: 6px; height: 6px; border-radius: 50%; background: #FF7A45"></span><span class="c8 cspark" aria-hidden="true" style="--dx: 46px; --dy: -46px; position: absolute; left: 62%; top: 58%; width: 5px; height: 5px; border-radius: 50%; background: #EDEDEF"></span><span class="c8 cspark" aria-hidden="true" style="--dx: 66px; --dy: 0px; position: absolute; left: 62%; top: 58%; width: 6px; height: 6px; border-radius: 2px; background: #FF7A45"></span><span class="c8 cspark" aria-hidden="true" style="--dx: 46px; --dy: 46px; position: absolute; left: 62%; top: 58%; width: 5px; height: 5px; border-radius: 50%; background: #4ADE80"></span><span class="c8 cspark" aria-hidden="true" style="--dx: 0px; --dy: 64px; position: absolute; left: 62%; top: 58%; width: 6px; height: 6px; border-radius: 50%; background: #FF7A45"></span><span class="c8 cspark" aria-hidden="true" style="--dx: -46px; --dy: 46px; position: absolute; left: 62%; top: 58%; width: 5px; height: 5px; border-radius: 2px; background: #EDEDEF"></span><span class="c8 cspark" aria-hidden="true" style="--dx: -66px; --dy: 0px; position: absolute; left: 62%; top: 58%; width: 6px; height: 6px; border-radius: 50%; background: #F2C46B"></span><span class="c8 cspark" aria-hidden="true" style="--dx: -46px; --dy: -46px; position: absolute; left: 62%; top: 58%; width: 5px; height: 5px; border-radius: 50%; background: #FF7A45"></span><span aria-hidden="true" style="position: absolute; left: -8px; top: calc(100% + 12px); display: grid; letter-spacing: 0; font-family: 'Geist Mono', monospace; font-size: 12px; font-weight: 500; line-height: 1.4; white-space: nowrap"><span class="c8 ctagA" style="grid-area: 1 / 1; justify-self: start; padding: 4px 9px; border-radius: 5px; background: #FF7A45; color: #0A0A0B">span.word · CtaSection.tsx:12</span><span class="c8 ctagB" style="grid-area: 1 / 1; justify-self: start; display: flex; align-items: center; gap: 6px; padding: 4px 9px; border-radius: 5px; background: #0F2A1A; border: 1px solid #1F5133; color: #4ADE80"><span style="width: 6px; height: 6px; border-radius: 50%; background: #4ADE80"></span>agent has it</span></span><svg class="c8 ccur" width="34" height="34" viewBox="0 0 24 24" aria-hidden="true" style="position: absolute; left: 62%; top: 58%; margin: -3px 0 0 -4px; pointer-events: none; filter: drop-shadow(0 6px 10px rgba(0,0,0,0.5))"><path d="M4 3l15 7.2-6.4 1.9L9.9 18.6z" fill="#FF7A45" stroke="#0A0A0B" stroke-width="1.2" stroke-linejoin="round"></path></svg></span></h2>
+<p style="margin: 24px 0 0; font-size: 17px; color: #A1A1AA">One command and you are set.</p>
+<div class="c8 cbox" style="display: flex; align-items: center; gap: 4px; padding: 6px 6px 6px 18px; background: #111113; border: 1px solid #2E2E35; border-radius: 10px; font-family: 'Geist Mono', monospace; font-size: 15px">
+<span style="color: #8B8B94">$</span>
+<span style="margin-left: 8px; margin-right: 14px">npx pointer-bridge setup</span>
+<button type="button" class="copy" style="min-width: 76px; height: 44px; padding: 0 18px; border: 0; border-radius: 7px; background: #FF7A45; color: #0A0A0B; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer">Copy</button>
+</div>
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer style="border-top: 1px solid #1C1C21">
+<div style="max-width: 1200px; margin: 0 auto; padding: 28px 24px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; font-family: 'Geist Mono', monospace; font-size: 13px; color: #8B8B94">
+<span>MIT licensed · built for people who talk to coding agents<br>Built with ❤️ by team <a href="https://technography.ai" style="color:#EDEDEF;text-decoration:underline;text-underline-offset:3px">Technography.ai</a><br><span style="font-size:12px">Claude Code is a product of Anthropic, Codex of OpenAI. MCP is an open protocol. Pointer is an independent project, not affiliated with or endorsed by any of them.</span></span>
+<nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 4px">
+<a href="https://github.com/raghavendra7533/pointer" style="padding: 10px 10px; color: #A1A1AA">GitHub</a>
+<a href="https://www.npmjs.com/package/pointer-bridge" style="padding: 10px 10px; color: #A1A1AA">npm</a>
+<a href="https://github.com/raghavendra7533/pointer/releases" style="padding: 10px 10px; color: #A1A1AA">Releases</a>
+<a href="https://github.com/raghavendra7533/pointer/blob/main/SECURITY.md" style="padding: 10px 10px; color: #A1A1AA">Security</a>
+</nav>
+</div>
+</footer>
+
+</div>
+
+<script>
+document.querySelectorAll(".copy").forEach(function (b) {
+  var t;
+  b.addEventListener("click", function () {
+    try { navigator.clipboard.writeText("npx pointer-bridge setup"); } catch (e) {}
+    b.textContent = "Copied ✓";
+    clearTimeout(t);
+    t = setTimeout(function () { b.textContent = "Copy"; }, 1600);
+  });
+});
+</script>
+</body></html>
