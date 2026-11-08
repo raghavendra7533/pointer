@@ -6,3 +6,5 @@ test-results
 playwright-report
 PRD*.md
 .env*
+packages/bridge/README.md
+packages/bridge/LICENSE

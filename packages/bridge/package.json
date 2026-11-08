@@ -15,7 +15,8 @@
   },
   "scripts": {
     "build": "node build.mjs",
-    "typecheck": "tsc -p ."
+    "typecheck": "tsc -p .",
+    "prepack": "cp ../../README.md ../../LICENSE ."
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.2",
